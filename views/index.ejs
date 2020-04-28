@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js""></script>
+    <script src=" https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/cm.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    
+    <div class="container-fluid">
+      <header class="row">
+        <div class="col-lg-12">
+          <h1 class="mb-0 mr-4">dApp invoke test</h1>
+          <p class="mb-0">Welcome to Waves dApp invokeTransactions test</p>
+        </div>
+      </header>
+      <div class="row" id="centre">
+        <div class="col-lg-3 h-100">
+          <h5>Configuration</h5>
+          <div class="row">
+            <div class="col-12 mt-2"><label for="multiply">Number of account to generate</label></div>
+            <div class="col-lg-7"><input type="number" placeholder="Number of account to generate" id="amountAccounts" class="p-2 mb-2 w-100 d-block" /></div>
+            <div class="col-lg-5"><button id="generateAddress" class="btn btn-primary w-100 mb-2">Generate accounts</button></div>
+            <div class="col-12 mt-2">
+              <label for="multiply">Main account seed</label>
+              <input type="text" placeholder="Main account seed" id="mainSeed" class="p-2 mb-2 w-100 d-block" />
+            </div>
+            <div class="col-12 mt-2"><label for="multiply">Token ID (empty is WAVES)</label>
+            <input type="text" placeholder="Token id" id="assetid" class="p-2 mb-2 w-100 d-block" /></div>
+          </div>
+          <div class="row">
+            <div class="col-12 mt-2"><label for="multiply">Amount to distribute per account</label></div>
+            <div class="col-lg-7"><input type="text" placeholder="Amount per account" id="amountToSend" class="p-2 mb-2 w-100 d-block" /></div>
+            <div class="col-lg-5"><button id="sendTokens" class="btn btn-primary w-100 mb-2">Credit all accounts</button></div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 mt-3"><label for="multiply">Number of invokation per account</label></div>
+            <div class="col-lg-7 pr-0"><input type="number" placeholder="Multiply calls by" id="multiply" class="p-2 mb-2 w-100 d-block mb-4" /></div>
+            <div class="col-lg-5">
+              <select id="network" class="p-2 mb-2 w-100 d-block mb-4">
+                <option value="T">Testnet</option>
+                <option value="S">Stagenet</option>
+              </select>
+            </div>
+          </div>
+         <div class="row">
+           <div class="col-lg-3 pr-lg-0"><button id="save" class="btn btn-info w-100">Save</button></div>
+           <div class="col-lg-3 pr-lg-0"><button id="reset" class="btn btn-danger w-100">Clear</button></div>
+           <div class="col-lg-6"><button id="run" class="btn btn-primary w-100">Run <span>0</span> invokeScript</button></div>
+         </div>    
+        </div>
+        <div class="col-lg-6 d-flex flex-column h-100">
+          <h5>Enter you invokeScript transaction params</h5>
+          <textarea id="codejs">console.log("test")</textarea>          
+        </div>
+        <div class="col-lg-3 h-100">
+          <div id="addresses" class="h-100">
+            <h5>Accounts list (<span>0</span>)</h5>
+            <ul id="users">
+        
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="row">
+        <div class="col-lg-12 h-100">
+          <div id="console-log-div"></div>
+          <div class="w-100 console-log-div" id="log"></div>
+        </div>
+      </footer>
+    </div>
+  </body>
+  <script src="./javascripts/bundle-main.js"></script>
+</html>
