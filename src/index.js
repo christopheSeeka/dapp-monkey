@@ -307,16 +307,3 @@ document.getElementById("expandConsole").addEventListener("click", function (e) 
     }
   }
 })(); */
-
-// TRANSFER TOKEN FOR DEV ONLY
-/* wt.broadcast(
-  wt.transfer(
-    {
-      amount: 10000000,
-      recipient: "3MouSkYhyvLXkn9wYRcqHUrhcDgNipSGFQN",
-      chainId: "S",
-    },
-    "ridge near cute smoke slight olive paddle okay velvet tilt benefit open silly together rent"
-  ),
-  "https://nodes-stagenet.wavesnodes.com"
-).then((res) => console.log(res)).catch((err) => console.log(err)); */
