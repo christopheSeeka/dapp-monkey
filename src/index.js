@@ -156,7 +156,7 @@ document.chance = chance;
 require("codemirror/mode/javascript/javascript");
 require("codemirror/addon/edit/closebrackets");
 var CodeMirror = require("codemirror");
-require("../src/console-log-div");
+require("../src/console-log-div.js");
 var js = CodeMirror.fromTextArea(document.getElementById("codejs"), {
   mode: "text/javascript",
   lineNumbers: true
