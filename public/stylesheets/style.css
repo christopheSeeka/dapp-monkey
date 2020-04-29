@@ -144,6 +144,9 @@ h5{
     padding-top: 10px;
     padding-bottom:10px;
   }
+  h1{
+    font-size: 28px;
+  }
   #save, #reset{
     margin-bottom: 10px;
   }
