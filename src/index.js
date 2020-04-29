@@ -1,61 +1,60 @@
 const wt = require("@waves/waves-transactions")
-
-import { v1 as uuidv1 } from "uuid";
-import { sha256 } from "js-sha256";
-import { cpus } from "os";
 import Chance from "chance"
 const chance = new Chance();
-
 const { invokeScript, massTransfer, nodeInteraction, broadcast } = require("@waves/waves-transactions");
-
-let whitelisted = false
-let chainid = 'S'
-let nodeURL = "https://nodes-stagenet.wavesnodes.com";
-let assetID = ""; // "Gf9t8FA4H3ssoZPCwrg3KwUFCci8zuUFP9ssRsUY3s6a";
-let dappAddress = "3MqJWRb7VYy7nZMrHmJ8zKnU8PxBq7Li6Zs";
-let amountPrice = 17099863201094; 
+document.chainid = 'T'
+document.nodeURL = "https://nodes-testnet.wavesnodes.com";
+let assetID = "";
 document.users = [] 
 let numCall = 0
 document.multiplcator = 1
-// ADDRESS OWNER
-// license patch spirit box dial ill market slab dynamic trophy true ramp room edit brush
-// 3PQzymawchcHYgCjnCYxjmGM11A5mCujq2A
 
 let generateUsers = function(){
-  let countAccount = document.querySelector("#addresses h5 span").textContent
-  countAccount == "" ? (countAccount = 0) : (countAccount = countAccount);
-  let num = document.getElementById("amountAccounts").value;
-  if(num > 100){
-    alert("100 address maximum")
-    return
-  }
-  for(let i = 0; i < num; i++){
-    document.users.push({index: i, seed: wt.libs.crypto.randomSeed()})
-    let element = document.createElement("li")
-    element.setAttribute("data-address", wt.libs.crypto.address(document.users[i].seed, chainid));
-    element.setAttribute("data-index", i);
-    element.insertAdjacentHTML("beforeend", "Address: "+wt.libs.crypto.address(document.users[i].seed, chainid)+"<br/>Seed: "+ document.users[i].seed+"<div class=\"balance\"></div><div class=\"res_invoke\"></div>");
-    document.getElementById("users").appendChild(element);
-    countAccount++
-  }
-  document.querySelector("#addresses h5 span").textContent = countAccount;
-  document.querySelector("#run span").textContent = countAccount;
-  document.getElementById("amountAccounts").value = ""
+    let countAccount = document.querySelector("#addresses h5 span").textContent
+    countAccount == "" ? (countAccount = 0) : (countAccount = countAccount);
+    let num = document.getElementById("amountAccounts").value;
+    num == "" ? num = 0 : num = num
+    if(parseInt(document.users.length) + parseInt(num) <= 100){
+      for(let i = 0; i < num; i++){
+        document.users.push({index: i, seed: wt.libs.crypto.randomSeed()})
+        let element = document.createElement("li")
+        element.setAttribute("data-address", wt.libs.crypto.address(document.users[i].seed, document.chainid));
+        element.setAttribute("data-index", i);
+        element.insertAdjacentHTML("beforeend", "<div class=\"addr\">Address: "+wt.libs.crypto.address(document.users[i].seed, document.chainid)+"</div><div class=\"seed\">Seed: "+ document.users[i].seed+"</div><div class=\"balance\"></div><div class=\"del\">X</div>");
+        document.getElementById("users").appendChild(element);
+        countAccount++
+      }
+      document.querySelector("#addresses h5 span").textContent = countAccount;
+      document.querySelector("#run span").textContent = countAccount;
+      document.getElementById("amountAccounts").value = ""
+    }else{
+      console.log("100 accounts max")
+    }
 }
-
+document.getElementById("users").addEventListener("click", function(elm){
+  if(elm.target.matches('.del')){
+    let index = parseInt(elm.target.parentNode.getAttribute("data-index"));
+    var indexFromValue = document.users.findIndex((x) => x.index === parseInt(index));
+    if (indexFromValue != -1) {
+      document.users.splice(indexFromValue, 1);
+    }
+    document.querySelectorAll('[data-index="' + index + '"]')[0].remove();
+    document.querySelector("#addresses h5 span").textContent = document.users.length 
+    document.querySelector("#run span").textContent = document.users.length 
+  }
+})
 
 document.getElementById("generateAddress").addEventListener("click", function(e){
   e.preventDefault()
   generateUsers()
 });
 
-
 document.updateBalance = async function(i){
   if(document.users.length){
-    let address = wt.libs.crypto.address(document.users[i].seed, chainid);
+    let address = wt.libs.crypto.address(document.users[i].seed, document.chainid);
     if (assetID == "" || assetID == null || assetID == "undefined") {
       await nodeInteraction
-        .balance(address, nodeURL).then((bal) => {
+        .balance(address, document.nodeURL).then((bal) => {
           document.querySelector('[data-address="'+address+'"] .balance').setAttribute("data-balance", bal)
           document.querySelector('[data-address="'+address+'"] .balance').textContent = "Balance = " + bal / 10 ** 8
         }).catch((err) => {
@@ -63,15 +62,12 @@ document.updateBalance = async function(i){
         });
     } else {
       await nodeInteraction
-        .assetBalance(assetID, address, nodeURL)
+        .assetBalance(assetID, address, document.nodeURL)
         .then((bal) => {
-          document
-            .querySelector('[data-address="' + address + '"] .balance')
-            .setAttribute("data-balance", bal);
-          document.querySelector(
-            '[data-address="' + address + '"] .balance'
-          ).textContent = "Balance = " + bal / 10 ** 8;
-        }).catch((err) => {
+          document.querySelector('[data-address="' + address + '"] .balance').setAttribute("data-balance", bal);
+          document.querySelector('[data-address="' + address + '"] .balance').textContent = "Balance = " + bal / 10 ** 8;
+        })
+        .catch((err) => {
           console.log(err);
         });
     }
@@ -79,14 +75,13 @@ document.updateBalance = async function(i){
 }
 
 let displayExistingUsers = function(users){
-  let countAccount = 0
-  let num = users.length
-
+  let countAccount = 0;
+  let num = users.length;
   for(let i = 0; i < num; i++){
     let element = document.createElement("li")
-    element.setAttribute("data-address", wt.libs.crypto.address(users[i].seed, chainid));
+    element.setAttribute("data-address", wt.libs.crypto.address(users[i].seed, document.chainid));
     element.setAttribute("data-index", i);
-    element.insertAdjacentHTML("beforeend", "Address: "+wt.libs.crypto.address(users[i].seed, chainid)+"<br/>Seed: "+ users[i].seed+"<div class=\"balance\"></div><div class=\"res_invoke\"></div>");
+    element.insertAdjacentHTML("beforeend", "<div class=\"addr\">Address: "+wt.libs.crypto.address(document.users[i].seed, document.chainid)+"</div><div class=\"seed\">Seed: "+ document.users[i].seed+"</div><div class=\"balance\"></div><div class=\"del\">X</div>");
     document.getElementById("users").appendChild(element);
     countAccount++
   }
@@ -96,15 +91,13 @@ let displayExistingUsers = function(users){
   numCall = countAccount;
 }
 
-document.getElementById("multiply").addEventListener("input", function(e){
+document.getElementById("multiply").addEventListener("input", async function(e){
   let countAccount = document.querySelector("#addresses h5 span").textContent;
   document.multiplcator = document.getElementById("multiply").value
   document.querySelector("#run span").textContent = document.multiplcator * countAccount;
   numCall = document.multiplcator * countAccount;
 });
 
-
-let smartAccount = true // make it dynamic with a checkbox or check it directrely if in api
 let sendTokens = async function(amount){
   console.log("Mass tranfer init...")
   if(document.users.length > 100){
@@ -112,29 +105,32 @@ let sendTokens = async function(amount){
     return
   }
   let mainSeed = document.getElementById("mainSeed").value;
+  let checkAccountType = await nodeInteraction.scriptInfo(wt.libs.crypto.address(mainSeed, document.chainid), document.nodeURL)
+  let extraFee = checkAccountType.extraFee
+  if(extraFee!=0){
+    console.log("Adding extra " + extraFee + " free due to smart account.");
+  }
 
   let amountToSend = document.getElementById("amountToSend").value;
-
   assetID = document.getElementById("assetid").value;
   if( assetID == ""){ assetID = null; }
-
   let masstxdata = []
   for(let i = 0; i < document.users.length; i++){
     masstxdata.push({
       amount: amountToSend * 10 ** 8,
-      recipient: wt.libs.crypto.address(document.users[i].seed, chainid),
+      recipient: wt.libs.crypto.address(document.users[i].seed, document.chainid),
     });
   }
-  let fee = smartAccount ? 400000 + masstxdata.length * 100000 : masstxdata.length * 100000
+  let fee = extraFee + masstxdata.length * 100000
   const params = {
     transfers: masstxdata,
     assetId: assetID == "" ? null : assetID,
     fee: fee
   };
 
-  let tx = await broadcast(massTransfer(params, mainSeed), nodeURL)
+  let tx = await broadcast(massTransfer(params, mainSeed), document.nodeURL);
   console.log("Wait for tx...")
-  let txDone = await nodeInteraction.waitForTx(tx.id, { apiBase: nodeURL });
+  let txDone = await nodeInteraction.waitForTx(tx.id, { apiBase: document.nodeURL });
   let countInterval = 0;
   let intervalID  = setInterval(function (e) {
       for (let i = 0; i < document.users.length; i++) {
@@ -152,6 +148,16 @@ document.getElementById("sendTokens").addEventListener("click", function (e) {
   e.preventDefault();
   sendTokens();
 });
+
+document.getElementById("network").addEventListener("change", function(e){
+  if( e.target.selectedIndex == 0){
+    document.chainid = "T";
+    document.nodeURL = "https://nodes-testnet.wavesnodes.com";
+  } else if (e.target.selectedIndex == 1) {
+    document.chainid = "S";
+    document.nodeURL = "https://nodes-stagenet.wavesnodes.com";
+  }
+})
 
 
 document.invokeScript = invokeScript;
@@ -176,27 +182,28 @@ $("#run").click(function () {
     var nodeInteraction = document.nodeInteraction;
     var updateBalance = document.updateBalance
     var chance = document.chance
+    document.chainId = document.getElementById("network").value
     var numCall = ${numCall};
     var txs = []
+    
     for(var i=0; i < document.users.length; i++){
     `;
   jsx += js.getValue();
   jsx += `
-      
+      params.chainId = document.chainId
       let signedTx = invokeScript(params, document.users[i].seed)
       txs.push(signedTx.id)
-      let broadcastTx = broadcast(signedTx, "${nodeURL}").then(data => { 
+      let broadcastTx = broadcast(signedTx, document.nodeURL).then(data => { 
         console.log("<i>Broacasted tx: "+data.id+"</i>")          
       }).catch(err => console.log(err))
       document.countingCalls++
     }
-    console.log(document.countingCalls+" Invocation(s) initiated")
 
     Promise.all(txs.map(id =>{
-      return nodeInteraction.waitForTx(id, {apiBase:"https://nodes-stagenet.wavesnodes.com"}).then(res => {
+      return nodeInteraction.waitForTx(id, {apiBase: document.nodeURL}).then(res => {
         
         if(res.applicationStatus == "scriptExecutionFailed"){
-          nodeInteraction.stateChanges(res.id, "https://nodes-stagenet.wavesnodes.com").then(state => {
+          nodeInteraction.stateChanges(res.id, document.nodeURL).then(state => {
             console.log("Status: "+res.applicationStatus+"<br/>Error: " + state.errorMessage.text+"<br/>TxID: "+res.id+", Sender: "+res.sender); 
           }) 
         }else{
@@ -209,15 +216,20 @@ $("#run").click(function () {
           document.updateBalance(i);
         }
     })
+    
   }
   `;
   var s = document.createElement("script");
   s.setAttribute("id", "chalfunction");
   s.textContent = jsx; //inne
   document.body.appendChild(s);
+  var start = window.performance.now();
   for(var i=0; i < document.multiplcator; i++){
     document.challengeFunction();
   }
+  var end = window.performance.now();
+  var time = end - start;
+  console.log(document.countingCalls + " Invocation(s) broadcast initiated in: "+time+" ms");
   
 });
 
@@ -231,7 +243,8 @@ document.getElementById("save").addEventListener("click", function (e) {
   localStorage.setItem("mainSeed", document.getElementById("mainSeed").value);
   localStorage.setItem("assetID", document.getElementById("assetid").value);
   localStorage.setItem("lastCode", js.getValue())
-  console.log("Users, Seed, Asset ID and code saved!");
+  localStorage.setItem("chainid", document.getElementById("network").value)
+  console.log("Users, Seed, Asset ID, chain ID and Code saved!");
 });
 
 document.getElementById("reset").addEventListener("click", function (e) {
@@ -239,9 +252,11 @@ document.getElementById("reset").addEventListener("click", function (e) {
   localStorage.removeItem("users");
   localStorage.removeItem("mainSeed");
   localStorage.removeItem("assetID");
+  localStorage.removeItem("chainid")
   document.getElementById("mainSeed").value = "";
   document.getElementById("assetid").value = "";
   document.getElementById("users").innerHTML = "";
+  document.getElementById("network").selectedIndex = "0"
   document.users = [];
   js.setValue('console.log("test")');
   document.querySelector("#addresses h5 span").textContent = 0;
@@ -250,15 +265,24 @@ document.getElementById("reset").addEventListener("click", function (e) {
 });
 
 if (localStorage.getItem("users")) {
-  console.log("Configuration loaded")
   document.users = JSON.parse(localStorage.getItem("users"))
   js.setValue(localStorage.getItem("lastCode"))
   document.getElementById("mainSeed").value = localStorage.getItem("mainSeed");
   document.getElementById("assetid").value = localStorage.getItem("assetID");
+  if(localStorage.getItem("chainid") == "T"){
+    document.chainid = "T";
+    document.nodeURL = "https://nodes-testnet.wavesnodes.com";
+    document.getElementById("network").selectedIndex = 0;
+  }else if(localStorage.getItem("chainid") == "S"){
+    document.chainid = "S";
+    document.nodeURL = "https://nodes-stagenet.wavesnodes.com";
+    document.getElementById("network").selectedIndex = 1;
+  }
   displayExistingUsers(document.users);
   for (let i = 0; i < document.users.length; i++) {
     document.updateBalance(i);
   }
+   console.log("Configuration loaded");
 }
 
 document.getElementById("clearConsole").addEventListener("click", function (e) {
