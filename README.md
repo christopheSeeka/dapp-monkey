@@ -1,13 +1,13 @@
 # monkey-dapp
 Monkey test for invokescript transactions
 
-## Simple monkey invoketransaction testing
+## Simple monkey invokeScript transaction testing
 
 Only enter your params details and any logic before it.
 
-This is using the [Chance library](https://chancejs.com/) for random data generation.
+This is using [Waves Transactions library](https://wavesplatform.github.io/waves-transactions/) for the invokeScript and [Chance library](https://chancejs.com/) for random data generation. the "chance" variable is available inside the editor.
 
-Example to use random data in params:
+Example to use chance random data in params:
 
 ```
 let params = {
