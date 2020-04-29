@@ -91,6 +91,9 @@ footer.expand{
 a {
   color: #00B7FF;
 }
+.red{
+  color: #c51e1e;
+}
 #console-log-text{
   border: solid 1px  #ccc;
   padding: 10px;

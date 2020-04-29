@@ -98,7 +98,7 @@ document.getElementById("multiply").addEventListener("input", async function(e){
 });
 
 let sendTokens = async function(amount){
-  console.log("Mass tranfer init...")
+  console.log("Mass distribution init...");
   if(document.users.length > 100){
     alert("100 maximum");
     return
@@ -128,8 +128,9 @@ let sendTokens = async function(amount){
   };
 
   let tx = await broadcast(massTransfer(params, mainSeed), document.nodeURL);
-  console.log("Wait for tx...")
+  console.log("Wait for mass distribution...")
   let txDone = await nodeInteraction.waitForTx(tx.id, { apiBase: document.nodeURL });
+  console.log("Mass distributiom done.");
 }
 
 document.getElementById("sendTokens").addEventListener("click", function (e) {
@@ -160,6 +161,7 @@ var js = CodeMirror.fromTextArea(document.getElementById("codejs"), {
   mode: "text/javascript",
   lineNumbers: true
 });
+
 document.getElementById("run").addEventListener("click", function () {
   document.countingCalls = 0
   if (document.getElementById("dynamicfunction")){
@@ -172,6 +174,7 @@ document.getElementById("run").addEventListener("click", function () {
     var updateBalance = document.updateBalance
     var chance = document.chance
     document.chainId = document.getElementById("network").value
+    let explorerUrl = document.chainId == 'T' ? "https://wavesexplorer.com/testnet/tx/" : "https://stagenet.wavesexplorer.com/tx/"
     var numCall = ${numCall};
     var txs = []
     
@@ -183,8 +186,8 @@ document.getElementById("run").addEventListener("click", function () {
       let signedTx = invokeScript(params, document.users[i].seed)
       txs.push(signedTx.id)
       let broadcastTx = broadcast(signedTx, document.nodeURL).then(data => { 
-        console.log("<i>Broacasted tx: "+data.id+"</i>")          
-      }).catch(err => console.log(err))
+        console.log('<i>Broacasted tx: <a href="'+explorerUrl+data.id+'" target="_blank">'+data.id+'</a></i>')        
+      }).catch(err => console.log(err.message+"<br/>", err))
       document.countingCalls++
     }
 
@@ -193,10 +196,10 @@ document.getElementById("run").addEventListener("click", function () {
         
         if(res.applicationStatus == "scriptExecutionFailed"){
           nodeInteraction.stateChanges(res.id, document.nodeURL).then(state => {
-            console.log("Status: "+res.applicationStatus+"<br/>Error: " + state.errorMessage.text+"<br/>TxID: "+res.id+", Sender: "+res.sender); 
+            console.log('Status: ' + res.applicationStatus + '<br/><span class="red">Error: ' + state.errorMessage.text + '</span><br/>TxID: <a href="'+explorerUrl+res.id+'" target="_blank">' + res.id + '</a>, Sender: ' + res.sender); 
           }) 
         }else{
-          console.log("Status: "+res.applicationStatus+"<br/>TxID: "+res.id+", Sender: "+res.sender)
+          console.log('Status: ' + res.applicationStatus + '<br/>TxID: <a href="'+explorerUrl+res.id+'" target="_blank">' + res.id + '</a>, Sender: ' + res.sender)
         }
       })
     })).then(jsons => {
@@ -283,18 +286,9 @@ document.getElementById("clearConsole").addEventListener("click", function (e) {
 document.getElementById("expandConsole").addEventListener("click", function (e) {
   e.preventDefault();
   document.querySelector("footer").classList.toggle("expand");
-});
-// OVERRIRE CONSOLE LOG
-/* (function () {
-  var old = console.log;
-  var logger = document.getElementById('log');
-  console.log = function () {
-    for (var i = 0; i < arguments.length; i++) {
-      if (typeof arguments[i] == 'object') {
-          logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
-      } else {
-          logger.innerHTML += arguments[i] + '<br />';
-      }
-    }
+  if (document.querySelector("footer").classList.contains("expand")) {
+    document.getElementById("expandConsole").textContent = "Minimize";
+  } else {
+    document.getElementById("expandConsole").textContent = "Expand";
   }
-})(); */
+});
