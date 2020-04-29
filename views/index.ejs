@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title><%= title %></title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js""></script>
@@ -60,7 +63,7 @@
            <div class="col-12 mt-3"><a href="https://github.com/christopheSeeka/monkey-dapp" target="_blank">Source / infos</a></div>
          </div>    
         </div>
-        <div class="col-lg-6 d-flex flex-column h-100">
+        <div class="col-lg-6 d-flex flex-column h-100 mt-lg-0 mt-4">
           <h5>Enter you invokeScript transaction params (<a href="https://chancejs.com/basics/string.html" target="_blank">random data documentation</a>)</h5>
           <textarea id="codejs">// Example:
 let myString = chance.string({ length: chance.integer({ min: 20, max: 50 }) })

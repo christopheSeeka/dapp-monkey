@@ -133,3 +133,26 @@ h5{
   padding-top: 15px;
   background-color: #f8f9fb;
 }
+
+@media(max-width: 992px){
+  header, #centre, footer{
+    height: auto;
+  }
+  header>div{
+    text-align: center;
+    display: block;
+    padding-top: 10px;
+    padding-bottom:10px;
+  }
+  #save, #reset{
+    margin-bottom: 10px;
+  }
+  #addresses{
+    max-height: 300px;
+    height: auto!important;
+    margin-top: 20px;
+  }
+  #console-log-text{
+    max-height: 350px;
+  }
+}
