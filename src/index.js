@@ -194,9 +194,6 @@ document.getElementById("run").addEventListener("click", function () {
     Promise.all(txs.map(id =>{
       return nodeInteraction.waitForTx(id, {apiBase: document.nodeURL}).then(res => {
         let status = "" 
-
-        console.log("res.applicationStatus")
-        console.log(res.applicationStatus)
         if(res.applicationStatus){ // RIDE V4 Status
           status = 'Status: ' + res.applicationStatus + '<br/>'
         }
