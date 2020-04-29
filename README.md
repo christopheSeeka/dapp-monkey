@@ -10,11 +10,14 @@ This is using [Waves Transactions library](https://wavesplatform.github.io/waves
 Example to use chance random data in params:
 
 ```
+let myString = chance.string({ length: chance.integer({ min: 20, max: 50 }) })
+let myInteger = chance.integer({ min: 0, max: 200000 })
+
 let params = {
   call: {
   args: [
-    { type: 'string', value: chance.string({ length: chance.integer({ min: 20, max: 50 }) }) },
-    { type: 'integer', value: chance.integer({ min: 0, max: 200000 }) }
+    { type: 'string', value: myString },
+    { type: 'integer', value: myInteger }
   ],
     function: 'call'
   },
