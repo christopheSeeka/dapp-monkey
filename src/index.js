@@ -193,13 +193,20 @@ document.getElementById("run").addEventListener("click", function () {
 
     Promise.all(txs.map(id =>{
       return nodeInteraction.waitForTx(id, {apiBase: document.nodeURL}).then(res => {
-        
+        let status = "" 
+
+        console.log("res.applicationStatus")
+        console.log(res.applicationStatus)
+        if(res.applicationStatus){ // RIDE V4 Status
+          status = 'Status: ' + res.applicationStatus + '<br/>'
+        }
         if(res.applicationStatus == "scriptExecutionFailed"){
           nodeInteraction.stateChanges(res.id, document.nodeURL).then(state => {
-            console.log('Status: ' + res.applicationStatus + '<br/><span class="red">Error: ' + state.errorMessage.text + '</span><br/>TxID: <a href="'+explorerUrl+res.id+'" target="_blank">' + res.id + '</a>, Sender: ' + res.sender); 
+            
+            console.log(status+'<span class="red">Error: ' + state.errorMessage.text + '</span><br/>TxID: <a href="'+explorerUrl+res.id+'" target="_blank">' + res.id + '</a>, Sender: ' + res.sender); 
           }) 
         }else{
-          console.log('Status: ' + res.applicationStatus + '<br/>TxID: <a href="'+explorerUrl+res.id+'" target="_blank">' + res.id + '</a>, Sender: ' + res.sender)
+          console.log(status+'TxID: <a href="'+explorerUrl+res.id+'" target="_blank">' + res.id + '</a>, Sender: ' + res.sender)
         }
       })
     })).then(jsons => {
