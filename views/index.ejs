@@ -19,7 +19,7 @@
         </div>
       </header>
       <div class="row" id="centre">
-        <div class="col-lg-3 h-100">
+        <div class="col-lg-3 h-100 overflow-auto">
           <h5>Configuration</h5>
           <div class="row">
             <div class="col-lg-8 mt-2 pd-0">
@@ -57,16 +57,20 @@
            <div class="col-lg-3 pr-lg-0"><button id="save" class="btn btn-info w-100">Save</button></div>
            <div class="col-lg-3 pr-lg-0"><button id="reset" class="btn btn-danger w-100">Clear</button></div>
            <div class="col-lg-6"><button id="run" class="btn btn-primary w-100">Run <span>0</span> invokeScript</button></div>
+           <div class="col-12 mt-3"><a href="https://github.com/christopheSeeka/monkey-dapp" target="_blank">Source / infos</a></div>
          </div>    
         </div>
         <div class="col-lg-6 d-flex flex-column h-100">
           <h5>Enter you invokeScript transaction params (<a href="https://chancejs.com/basics/string.html" target="_blank">random data documentation</a>)</h5>
           <textarea id="codejs">// Example:
+let myString = chance.string({ length: chance.integer({ min: 20, max: 50 }) })
+let myInteger = chance.integer({ min: 0, max: 200000 })
+
 let params = {
   call: {
   args: [
-    { type: 'string', value: chance.string({ length: chance.integer({ min: 20, max: 50 }) }) },
-    { type: 'integer', value: chance.integer({ min: 0, max: 200000 }) }
+    { type: 'string', value: myString },
+    { type: 'integer', value: myInteger }
   ],
     function: 'call'
   },
