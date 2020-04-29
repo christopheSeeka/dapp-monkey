@@ -93,7 +93,7 @@ let displayExistingUsers = function(users){
 
 document.getElementById("multiply").addEventListener("input", async function(e){
   let countAccount = document.querySelector("#addresses h5 span").textContent;
-  document.multiplcator = document.getElementById("multiply").value
+  document.getElementById("multiply").value == "" ? document.multiplcator = 1 : document.multiplcator = document.getElementById("multiply").value;
   document.querySelector("#run span").textContent = document.multiplcator * countAccount;
   numCall = document.multiplcator * countAccount;
 });
