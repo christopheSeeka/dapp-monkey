@@ -172,11 +172,12 @@ var js = CodeMirror.fromTextArea(document.getElementById("codejs"), {
   mode: "text/javascript",
   lineNumbers: true
 });
-
-$("#run").click(function () {
+document.getElementById("run").addEventListener("click", function () {
   document.countingCalls = 0
-  $("#chalfunction").remove();
-  var jsx = `document.challengeFunction = async function() { 
+  if (document.getElementById("dynamicfunction")){
+    document.getElementById("dynamicfunction").remove();
+  }
+  var jsx = `document.dynamicfunction = async function() { 
     var invokeScript = document.invokeScript; 
     var broadcast = document.broadcast;
     var nodeInteraction = document.nodeInteraction;
@@ -220,12 +221,12 @@ $("#run").click(function () {
   }
   `;
   var s = document.createElement("script");
-  s.setAttribute("id", "chalfunction");
+  s.setAttribute("id", "dynamicfunction");
   s.textContent = jsx; //inne
   document.body.appendChild(s);
   var start = window.performance.now();
   for(var i=0; i < document.multiplcator; i++){
-    document.challengeFunction();
+    document.dynamicfunction();
   }
   var end = window.performance.now();
   var time = end - start;
