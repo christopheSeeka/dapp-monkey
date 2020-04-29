@@ -1,7 +1,6 @@
-const wt = require("@waves/waves-transactions")
 import Chance from "chance"
 const chance = new Chance();
-const { invokeScript, massTransfer, nodeInteraction, broadcast } = require("@waves/waves-transactions");
+import { libs, invokeScript, massTransfer, nodeInteraction, broadcast } from "@waves/waves-transactions";
 document.chainid = 'T'
 document.nodeURL = "https://nodes-testnet.wavesnodes.com";
 let assetID = "";
@@ -16,11 +15,11 @@ let generateUsers = function(){
     num == "" ? num = 0 : num = num
     if(parseInt(document.users.length) + parseInt(num) <= 100){
       for(let i = 0; i < num; i++){
-        document.users.push({index: i, seed: wt.libs.crypto.randomSeed()})
+        document.users.push({index: i, seed: libs.crypto.randomSeed()})
         let element = document.createElement("li")
-        element.setAttribute("data-address", wt.libs.crypto.address(document.users[i].seed, document.chainid));
+        element.setAttribute("data-address", libs.crypto.address(document.users[i].seed, document.chainid));
         element.setAttribute("data-index", i);
-        element.insertAdjacentHTML("beforeend", "<div class=\"addr\">Address: "+wt.libs.crypto.address(document.users[i].seed, document.chainid)+"</div><div class=\"seed\">Seed: "+ document.users[i].seed+"</div><div class=\"balance\"></div><div class=\"del\">X</div>");
+        element.insertAdjacentHTML("beforeend", "<div class=\"addr\">Address: "+libs.crypto.address(document.users[i].seed, document.chainid)+"</div><div class=\"seed\">Seed: "+ document.users[i].seed+"</div><div class=\"balance\"></div><div class=\"del\">X</div>");
         document.getElementById("users").appendChild(element);
         countAccount++
       }
@@ -51,7 +50,7 @@ document.getElementById("generateAddress").addEventListener("click", function(e)
 
 document.updateBalance = async function(i){
   if(document.users.length){
-    let address = wt.libs.crypto.address(document.users[i].seed, document.chainid);
+    let address = libs.crypto.address(document.users[i].seed, document.chainid);
     if (assetID == "" || assetID == null || assetID == "undefined") {
       await nodeInteraction
         .balance(address, document.nodeURL).then((bal) => {
@@ -79,9 +78,9 @@ let displayExistingUsers = function(users){
   let num = users.length;
   for(let i = 0; i < num; i++){
     let element = document.createElement("li")
-    element.setAttribute("data-address", wt.libs.crypto.address(users[i].seed, document.chainid));
+    element.setAttribute("data-address", libs.crypto.address(users[i].seed, document.chainid));
     element.setAttribute("data-index", i);
-    element.insertAdjacentHTML("beforeend", "<div class=\"addr\">Address: "+wt.libs.crypto.address(document.users[i].seed, document.chainid)+"</div><div class=\"seed\">Seed: "+ document.users[i].seed+"</div><div class=\"balance\"></div><div class=\"del\">X</div>");
+    element.insertAdjacentHTML("beforeend", "<div class=\"addr\">Address: "+libs.crypto.address(document.users[i].seed, document.chainid)+"</div><div class=\"seed\">Seed: "+ document.users[i].seed+"</div><div class=\"balance\"></div><div class=\"del\">X</div>");
     document.getElementById("users").appendChild(element);
     countAccount++
   }
@@ -105,7 +104,7 @@ let sendTokens = async function(amount){
     return
   }
   let mainSeed = document.getElementById("mainSeed").value;
-  let checkAccountType = await nodeInteraction.scriptInfo(wt.libs.crypto.address(mainSeed, document.chainid), document.nodeURL)
+  let checkAccountType = await nodeInteraction.scriptInfo(libs.crypto.address(mainSeed, document.chainid), document.nodeURL)
   let extraFee = checkAccountType.extraFee
   if(extraFee!=0){
     console.log("Adding extra " + extraFee + " free due to smart account.");
@@ -118,7 +117,7 @@ let sendTokens = async function(amount){
   for(let i = 0; i < document.users.length; i++){
     masstxdata.push({
       amount: amountToSend * 10 ** 8,
-      recipient: wt.libs.crypto.address(document.users[i].seed, document.chainid),
+      recipient: libs.crypto.address(document.users[i].seed, document.chainid),
     });
   }
   let fee = extraFee + masstxdata.length * 100000
@@ -131,17 +130,6 @@ let sendTokens = async function(amount){
   let tx = await broadcast(massTransfer(params, mainSeed), document.nodeURL);
   console.log("Wait for tx...")
   let txDone = await nodeInteraction.waitForTx(tx.id, { apiBase: document.nodeURL });
-  let countInterval = 0;
-  let intervalID  = setInterval(function (e) {
-      for (let i = 0; i < document.users.length; i++) {
-        document.updateBalance(i);
-      }
-      if (++countInterval === 4) {
-        window.clearInterval(intervalID);
-        console.log("Mass Transfer confirmed.");
-      }
-  }, 2500);
-
 }
 
 document.getElementById("sendTokens").addEventListener("click", function (e) {
@@ -213,9 +201,6 @@ document.getElementById("run").addEventListener("click", function () {
       })
     })).then(jsons => {
         // console.log("All promise sent.")
-        for (let i = 0; i < document.users.length; i++) {
-          document.updateBalance(i);
-        }
     })
     
   }
@@ -234,6 +219,11 @@ document.getElementById("run").addEventListener("click", function () {
   
 });
 
+let checkBalance = setInterval(function(e){
+  for (let i = 0; i < document.users.length; i++) {
+    document.updateBalance(i);
+  }
+}, 2500)
 
 
 // SAVE/CLEAR
