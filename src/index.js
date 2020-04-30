@@ -1,27 +1,39 @@
 import Chance from "chance"
 const chance = new Chance();
 import { libs, invokeScript, massTransfer, nodeInteraction, broadcast } from "@waves/waves-transactions";
-document.chainid = 'T'
-document.nodeURL = "https://nodes-testnet.wavesnodes.com";
+
+let testnetURL = "https://nodes-testnet.wavesnodes.com";
+let stagenetURL = "https://nodes-stagenet.wavesnodes.com";
+
+if(localStorage.getItem("chainid")){
+  document.chainid = localStorage.getItem("chainid");
+  if(localStorage.getItem("chainid") == 'T'){
+    document.nodeURL = testnetURL;
+    document.getElementById("network").selectedIndex = 0;
+  }else{
+    document.nodeURL = stagenetURL;
+    document.getElementById("network").selectedIndex = 1;
+  }
+}else{
+  document.chainid = 'T'
+  document.nodeURL = testnetURL;
+}
+
+
 let assetID = "";
 document.users = [] 
 let numCall = 0
 document.multiplcator = 1
 
-let chainIdMatchList = function(){
+let chainIdCurrentList = function(){
   if(document.users.length){
-    let get2ndByteFirstAddr = libs.crypto.base58Decode(document.users[0])[1]
-    if(get2ndByteFirstAddr == document.chainid.charCodeAt(0)){
-      return true
-    }else{
-      return false
-    }
+    let get2ndByteFirstAddr = libs.crypto.base58Decode(document.users[0].address)[1]
+    return get2ndByteFirstAddr
   }
-  return true
+  return ""
 }
-
 let generateUsers = function(){
-    if(!chainIdMatchList()){
+    if(chainIdCurrentList() != "" && chainIdCurrentList() != document.chainid.charCodeAt(0)){
        console.log("<span class=\"red\">Don't mix chainid, clear account list first.</span>")
        return
     }
@@ -31,9 +43,10 @@ let generateUsers = function(){
     num == "" ? num = 0 : num = num
     if(parseInt(document.users.length) + parseInt(num) <= 100){
       for(let i = 0; i < num; i++){
-        document.users.push({index: i, seed: libs.crypto.randomSeed()})
+        let tempSeed = libs.crypto.randomSeed();
+        document.users.push({index: i, seed: tempSeed, address: libs.crypto.address(tempSeed, document.chainid)})
         let element = document.createElement("li")
-        element.setAttribute("data-address", libs.crypto.address(document.users[i].seed, document.chainid));
+        element.setAttribute("data-address", libs.crypto.address(tempSeed, document.chainid));
         element.setAttribute("data-index", i);
         element.insertAdjacentHTML("beforeend", "<div class=\"addr\">Address: "+libs.crypto.address(document.users[i].seed, document.chainid)+"</div><div class=\"seed\">Seed: "+ document.users[i].seed+"</div><div class=\"balance\"></div><div class=\"del\">X</div>");
         document.getElementById("users").appendChild(element);
@@ -167,7 +180,7 @@ document.getElementById("sendTokens").addEventListener("click", function (e) {
 });
 
 document.getElementById("network").addEventListener("change", function(e){
-  if (!chainIdMatchList()) {
+  if(chainIdCurrentList() != "" && chainIdCurrentList() != document.getElementById("network").value.charCodeAt(0)){
     console.log("<span class=\"red\">Don't mix chainid, clear account list first.</span>")
     if (e.target.selectedIndex == 0) {
       e.target.selectedIndex = 1
@@ -178,13 +191,12 @@ document.getElementById("network").addEventListener("change", function(e){
   }
   if( e.target.selectedIndex == 0){
     document.chainid = "T";
-    document.nodeURL = "https://nodes-testnet.wavesnodes.com";
+    document.nodeURL = testnetURL;
   } else if (e.target.selectedIndex == 1) {
     document.chainid = "S";
-    document.nodeURL = "https://nodes-stagenet.wavesnodes.com";
+    document.nodeURL = stagenetURL;
   }
 })
-
 
 document.invokeScript = invokeScript;
 document.broadcast = broadcast;
@@ -200,6 +212,7 @@ var js = CodeMirror.fromTextArea(document.getElementById("codejs"), {
 });
 
 document.getElementById("run").addEventListener("click", function () {
+  document.getElementById("overlay").classList.add("on");
   document.countingCalls = 0
   if (document.getElementById("dynamicfunction")){
     document.getElementById("dynamicfunction").remove();
@@ -227,7 +240,7 @@ document.getElementById("run").addEventListener("click", function () {
       }).catch(err => console.log(err.message+"<br/>", err))
       document.countingCalls++
     }
-
+    
     Promise.all(txs.map(id =>{
       return nodeInteraction.waitForTx(id, {apiBase: document.nodeURL}).then(res => {
         let status = "" 
@@ -246,7 +259,6 @@ document.getElementById("run").addEventListener("click", function () {
     })).then(jsons => {
         // console.log("All promise sent.")
     })
-    
   }
   `;
   var s = document.createElement("script");
@@ -260,7 +272,7 @@ document.getElementById("run").addEventListener("click", function () {
   var end = window.performance.now();
   var time = end - start;
   console.log(document.countingCalls + " Invocation(s) broadcast initiated in: "+time+" ms");
-  
+  document.getElementById("overlay").classList.remove("on");
 });
 
 let checkBalance = setInterval(function(e){
@@ -304,15 +316,15 @@ if (localStorage.getItem("users")) {
   js.setValue(localStorage.getItem("lastCode"))
   document.getElementById("mainSeed").value = localStorage.getItem("mainSeed");
   document.getElementById("assetid").value = localStorage.getItem("assetID");
-  if(localStorage.getItem("chainid") == "T"){
+/*   if(localStorage.getItem("chainid") == "T"){
     document.chainid = "T";
-    document.nodeURL = "https://nodes-testnet.wavesnodes.com";
+    document.nodeURL = testnetURL;
     document.getElementById("network").selectedIndex = 0;
   }else if(localStorage.getItem("chainid") == "S"){
     document.chainid = "S";
-    document.nodeURL = "https://nodes-stagenet.wavesnodes.com";
+    document.nodeURL = stagenetURL;
     document.getElementById("network").selectedIndex = 1;
-  }
+  } */
   displayExistingUsers(document.users);
   for (let i = 0; i < document.users.length; i++) {
     document.updateBalance(i);

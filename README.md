@@ -1,5 +1,6 @@
 # monkey-dapp
-Monkey test for invokescript transactions, this is an early version 0.1
+Monkey test for invokescript transactions, this is an experimental tools in a very early version 0.1
+Only use it if you understand what it does and the limitations.
 
 ## Simple monkey invokeScript transaction testing
 
@@ -77,3 +78,15 @@ It display the Address, Seed and Balance in waves or token (if token ID have bee
 ### Console
 
 This console is displaying your console.log the same way as you browser console, if you needs more details for some output you may still needs to check the browser console.
+
+## LIMITATIONS
+
+This tools is using the public nodes API:  
+https://wavesexplorer.com/testnet/tx/  
+https://stagenet.wavesexplorer.com/tx/  
+  
+These have [limitations](https://docs.wavesprotocol.org/en/waves-node/api-limitations-of-the-pool-of-public-nodes) and exceeding them will result in a "503 Service Temporarily Unavailable" error for some broadcast.
+To remove the limitations, install your own version of the tools with your own node API url.
+
+This early version is not using Web Workers so the more you enter in terms of Number of invokation per account, the more you may expect your browser to not respond for seconds to minutes untill processed all transactions.
+For example 3500 invocations requests took almost a minute.
