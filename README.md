@@ -11,31 +11,31 @@ This is using [Waves Transactions library](https://wavesplatform.github.io/waves
 
 ### Account(s) Configuration
 
-<b>Main account seed:</b> 
+<b>Main account seed:</b>  
 the seed of the main account that will populate new accounts with waves or custom tokens.
 
-<b>Network:</b> 
+<b>Network:</b>  
 ether testnet or stagenet, there is no mainnet since its only a development testing tools
 
-<b>Number of account to generate:</b> 
+<b>Number of account to generate:</b>  
 the number of account you want create, you can only add account of a same network to existing list, if you want change network you needs to clear the account(s) list first
 
-<b>Token ID:</b> 
+<b>Token ID:</b>  
 if left empty the main account will send Waves, else it will use this token id and send the associated tokens.
 
-<b>Amount to distribute per account:</b> 
+<b>Amount to distribute per account:</b>  
 the amount of token/waves you want send to each account of the Account(s) list
 
-<b>Number of invokation per account:</b> 
+<b>Number of invokation per account:</b>  
 this will multiply the number of calls, for example if you have 20 accounts in the Accounts list and put this field at 2, then i will call 40 invokescript transactions, 2 for each account
 
-<b>Save button:</b> 
+<b>Save button:</b>  
 Will save the configuration for following fields: Users, Seed, Asset ID, chain ID and Code
 
-<b>Clear button:</b> 
+<b>Clear button:</b>  
 will clear the configuration and erase the following fields: Users, Seed, Asset ID, chain ID and Code
 
-<b>Run x invokeScript:</b> 
+<b>Run x invokeScript:</b>  
 will start the monkey test and initiate the transactions
 
 ### InvokeScript transaction params
