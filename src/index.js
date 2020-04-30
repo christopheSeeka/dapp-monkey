@@ -8,7 +8,23 @@ document.users = []
 let numCall = 0
 document.multiplcator = 1
 
+let chainIdMatchList = function(){
+  if(document.users.length){
+    let get2ndByteFirstAddr = libs.crypto.base58Decode(document.users[0])[1]
+    if(get2ndByteFirstAddr == document.chainid.charCodeAt(0)){
+      return true
+    }else{
+      return false
+    }
+  }
+  return true
+}
+
 let generateUsers = function(){
+    if(!chainIdMatchList()){
+       console.log("<span class=\"red\">Don't mix chainid, clear account list first.</span>")
+       return
+    }
     let countAccount = document.querySelector("#addresses h5 span").textContent
     countAccount == "" ? (countAccount = 0) : (countAccount = countAccount);
     let num = document.getElementById("amountAccounts").value;
@@ -30,6 +46,12 @@ let generateUsers = function(){
       console.log("100 accounts max")
     }
 }
+
+document.getElementById("generateAddress").addEventListener("click", function(e){
+  e.preventDefault()
+  generateUsers()
+});
+
 document.getElementById("users").addEventListener("click", function(elm){
   if(elm.target.matches('.del')){
     let index = parseInt(elm.target.parentNode.getAttribute("data-index"));
@@ -43,9 +65,11 @@ document.getElementById("users").addEventListener("click", function(elm){
   }
 })
 
-document.getElementById("generateAddress").addEventListener("click", function(e){
-  e.preventDefault()
-  generateUsers()
+document.getElementById("clearUsers").addEventListener("click", function(e){
+  document.users.length = 0
+  document.querySelector("#addresses h5 span").textContent = 0 
+  document.querySelector("#run span").textContent = 0 
+  document.getElementById("users").innerHTML = ""
 });
 
 document.updateBalance = async function(i){
@@ -54,8 +78,10 @@ document.updateBalance = async function(i){
     if (assetID == "" || assetID == null || assetID == "undefined") {
       await nodeInteraction
         .balance(address, document.nodeURL).then((bal) => {
-          document.querySelector('[data-address="'+address+'"] .balance').setAttribute("data-balance", bal)
-          document.querySelector('[data-address="'+address+'"] .balance').textContent = "Balance = " + bal / 10 ** 8
+          if(document.querySelector('[data-address="'+address+'"] .balance')){
+            document.querySelector('[data-address="'+address+'"] .balance').setAttribute("data-balance", bal)
+            document.querySelector('[data-address="'+address+'"] .balance').textContent = "Balance = " + bal / 10 ** 8
+          }
         }).catch((err) => {
           console.log(err);
         });
@@ -63,8 +89,10 @@ document.updateBalance = async function(i){
       await nodeInteraction
         .assetBalance(assetID, address, document.nodeURL)
         .then((bal) => {
-          document.querySelector('[data-address="' + address + '"] .balance').setAttribute("data-balance", bal);
-          document.querySelector('[data-address="' + address + '"] .balance').textContent = "Balance = " + bal / 10 ** 8;
+          if(document.querySelector('[data-address="'+address+'"] .balance')){
+            document.querySelector('[data-address="' + address + '"] .balance').setAttribute("data-balance", bal);
+            document.querySelector('[data-address="' + address + '"] .balance').textContent = "Balance = " + bal / 10 ** 8;
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -139,6 +167,15 @@ document.getElementById("sendTokens").addEventListener("click", function (e) {
 });
 
 document.getElementById("network").addEventListener("change", function(e){
+  if (!chainIdMatchList()) {
+    console.log("<span class=\"red\">Don't mix chainid, clear account list first.</span>")
+    if (e.target.selectedIndex == 0) {
+      e.target.selectedIndex = 1
+    } else if (e.target.selectedIndex == 1) {
+      e.target.selectedIndex = 0
+    }
+    return;
+  }
   if( e.target.selectedIndex == 0){
     document.chainid = "T";
     document.nodeURL = "https://nodes-testnet.wavesnodes.com";
@@ -230,7 +267,7 @@ let checkBalance = setInterval(function(e){
   for (let i = 0; i < document.users.length; i++) {
     document.updateBalance(i);
   }
-}, 2500)
+}, 4000)
 
 
 // SAVE/CLEAR
