@@ -28,20 +28,20 @@ if left empty the main account will send Waves, else it will use this token id a
 the amount of token/waves you want send to each account of the Account(s) list
 
 <b>Number of invokation per account:</b>  
-this will multiply the number of calls, for example if you have 20 accounts in the Accounts list and put this field at 2, then i will call 40 invokescript transactions, 2 for each account
+this will multiply the number of calls, for example if you have 20 accounts in the Accounts list and put this field at 2, then it will call 40 invokescript transactions, 2 for each account
 
 <b>Save button:</b>  
 Will save the configuration for following fields: Users, Seed, Asset ID, chain ID and Code
 
 <b>Clear button:</b>  
-will clear the configuration and erase the following fields: Users, Seed, Asset ID, chain ID and Code
+will clear the configuration and erase the following stored data: Users, Seed, Asset ID, chain ID and Code
 
 <b>Run x invokeScript:</b>  
 will start the monkey test and initiate the transactions
 
 ### InvokeScript transaction params
 
-Enter you invokeScript transaction params here, it have to use:
+Enter you invokeScript transaction params here, it have to use "let params" as object name:
 
 ```
 let params = {
