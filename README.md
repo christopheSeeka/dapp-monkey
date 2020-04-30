@@ -1,5 +1,5 @@
 # monkey-dapp
-Monkey test for invokescript transactions
+Monkey test for invokescript transactions, this is an early version 0.1
 
 ## Simple monkey invokeScript transaction testing
 
