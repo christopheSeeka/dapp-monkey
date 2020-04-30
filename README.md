@@ -7,11 +7,11 @@ Only enter your params details and any logic before it.
 
 This is using [Waves Transactions library](https://wavesplatform.github.io/waves-transactions/) for the invokeScript and [Chance library](https://chancejs.com/) for random data generation. the "chance" variable is available inside the editor.
 
-## Fields overview
+## Details overview
 
 ### Account(s) Configuration
 
-Main account seed: the seed of the main account that will populate new accounts with waves or custom tokens.
+<b>Main account seed:</b> the seed of the main account that will populate new accounts with waves or custom tokens.
 
 Network: ether testnet or stagenet, there is no mainnet since its only a development testing tools
 
