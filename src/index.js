@@ -1,9 +1,16 @@
 import Chance from "chance"
 const chance = new Chance();
 import { libs, invokeScript, massTransfer, nodeInteraction, broadcast } from "@waves/waves-transactions";
-
+document.invokeScript = invokeScript;
+document.broadcast = broadcast;
+document.nodeInteraction = nodeInteraction;
+document.chance = chance;
 let testnetURL = "https://nodes-testnet.wavesnodes.com";
 let stagenetURL = "https://nodes-stagenet.wavesnodes.com";
+let assetID = "";
+document.users = [];
+let numCall = 0;
+document.multiplcator = 1;
 
 if(localStorage.getItem("chainid")){
   document.chainid = localStorage.getItem("chainid");
@@ -18,12 +25,6 @@ if(localStorage.getItem("chainid")){
   document.chainid = 'T'
   document.nodeURL = testnetURL;
 }
-
-
-let assetID = "";
-document.users = [] 
-let numCall = 0
-document.multiplcator = 1
 
 let chainIdCurrentList = function(){
   if(document.users.length){
@@ -198,10 +199,7 @@ document.getElementById("network").addEventListener("change", function(e){
   }
 })
 
-document.invokeScript = invokeScript;
-document.broadcast = broadcast;
-document.nodeInteraction = nodeInteraction;
-document.chance = chance;
+
 require("codemirror/mode/javascript/javascript");
 require("codemirror/addon/edit/closebrackets");
 var CodeMirror = require("codemirror");
@@ -283,7 +281,6 @@ let checkBalance = setInterval(function(e){
 
 
 // SAVE/CLEAR
-
 document.getElementById("save").addEventListener("click", function (e) {
   e.preventDefault();
   localStorage.setItem("users", JSON.stringify(document.users));
@@ -293,7 +290,6 @@ document.getElementById("save").addEventListener("click", function (e) {
   localStorage.setItem("chainid", document.getElementById("network").value)
   console.log("Users, Seed, Asset ID, chain ID and Code saved!");
 });
-
 document.getElementById("reset").addEventListener("click", function (e) {
   e.preventDefault();
   localStorage.removeItem("users");
@@ -310,28 +306,17 @@ document.getElementById("reset").addEventListener("click", function (e) {
   document.querySelector("#run span").textContent = 0;
   console.log("Configuration and code cleared!");
 });
-
 if (localStorage.getItem("users")) {
   document.users = JSON.parse(localStorage.getItem("users"))
   js.setValue(localStorage.getItem("lastCode"))
   document.getElementById("mainSeed").value = localStorage.getItem("mainSeed");
   document.getElementById("assetid").value = localStorage.getItem("assetID");
-/*   if(localStorage.getItem("chainid") == "T"){
-    document.chainid = "T";
-    document.nodeURL = testnetURL;
-    document.getElementById("network").selectedIndex = 0;
-  }else if(localStorage.getItem("chainid") == "S"){
-    document.chainid = "S";
-    document.nodeURL = stagenetURL;
-    document.getElementById("network").selectedIndex = 1;
-  } */
   displayExistingUsers(document.users);
   for (let i = 0; i < document.users.length; i++) {
     document.updateBalance(i);
   }
    console.log("Configuration loaded");
 }
-
 document.getElementById("clearConsole").addEventListener("click", function (e) {
   e.preventDefault();
   document.getElementById("console-log-text").innerHTML = "";
