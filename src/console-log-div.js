@@ -2,7 +2,6 @@ import JSONFormatter from "json-formatter-js";
 (function initConsoleLogDiv() {
   'use strict';
 
-
   if (console.log.toDiv) {
     return;
   }
@@ -57,6 +56,7 @@ import JSONFormatter from "json-formatter-js";
   }());
 
   function printToDiv() {
+
     var msg = Array.prototype.slice.call(arguments, 0)
       .map(toString)
       .join(' ');

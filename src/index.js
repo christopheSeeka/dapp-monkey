@@ -199,7 +199,6 @@ document.getElementById("network").addEventListener("change", function(e){
   }
 })
 
-
 require("codemirror/mode/javascript/javascript");
 require("codemirror/addon/edit/closebrackets");
 var CodeMirror = require("codemirror");
